@@ -1,0 +1,1065 @@
+\documentclass{beamer}
+%\usefonttheme{professionalfonts}
+
+\usepackage[round]{natbib}
+\bibliographystyle{chicago}
+\def\bibfont{\tiny}
+\setlength{\bibsep}{0pt plus 0.3ex}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric,graphs,scopes,backgrounds}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes.arrows}
+\usetikzlibrary{decorations.markings}
+\usepackage{varwidth}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{multirow}
+
+
+
+\usefonttheme{serif}
+%\usefonttheme{structuresmallcapsserif}
+
+%%%%%%%%%%%%%%%%
+
+\title[Moving Beyond Descriptives]{Moving Beyond Descriptives}
+\author[LJasny]{Lorien Jasny\inst{1}}
+\institute[SESYNC]{\inst{1} University of Exeter\\
+\texttt{L.Jasny@exeter.ac.uk}\\
+				{\insertlogo}}
+\logo{%
+    \includegraphics[width=2cm,height=1.5cm,keepaspectratio]{../introToSNAinR/images/logo_exeter.jpg}~%
+    \includegraphics[width=2cm,height=1.5cm,keepaspectratio]{../introToSNAinR/images/Q-Step-Logo.jpg}%
+}
+
+\date{\textit{EUSN Workshop}\\11 September 2022}
+\usetheme{Hannover}
+\def\swidth{1.6cm}
+\setbeamersize{sidebar width left=\swidth}
+\setbeamertemplate{sidebar left}
+{
+  {\usebeamerfont{title in sidebar}%
+    \vskip1.5em%
+    \usebeamercolor[fg]{title in sidebar}%
+    \insertshorttitle[width=\swidth,center,respectlinebreaks]\par%
+    \vskip1.25em%
+  }%
+  {%
+
+    \usebeamerfont{author in sidebar}%
+    \insertshortauthor[width=\swidth,center,respectlinebreaks]\par%
+    \vskip1.25em%
+  }%
+  %\hbox to2cm{\hss\insertlogo\hss}
+  \vskip1.25em%
+  \insertverticalnavigation{\swidth}%
+  \vfill
+  \hbox to2cm{\hskip0.6cm\usebeamerfont{subsection in
+      sidebar}\strut\usebeamercolor[fg]{subsection in
+      sidebar}\insertframenumber-\inserttotalframenumber\hfill}%
+  \vskip3pt%
+}%
+%%%%%%%%%%%%%%%%
+
+\begin{document}
+	\begin{frame}
+	\maketitle
+	\end{frame}
+
+%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Contents}
+\begin{itemize}
+\item Setup
+\begin{itemize}
+\item \textbf{R}
+\item RStudio
+\item statnet package
+\item datafiles for the class
+\end{itemize}
+\item Basic SNA Measures
+\begin{itemize}
+\item centrality measures
+\item graph correlation
+\item reciprocity
+\item transitivity
+\end{itemize}
+\item Hypothesis testing
+\begin{itemize}
+\item for Node level indices
+\begin{itemize}
+\item General permutation tests
+\item Quadratic Assignment Procedure
+\item Network Autocorrelation Models
+\end{itemize}
+\item for Graph level indices
+\begin{itemize}
+\item Conditional Uniform Graph (CUG) Models
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+\section{Node Level Permutation}
+\begin{frame}
+\frametitle{Hypothesis Testing}
+\end{frame}
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Relating Node level indices to covariates}
+\begin{itemize}
+\item Node Level Indices: centrality measures, brokerage, constraint
+\pause
+\item Node Covariates: measures of power, career advancement, gender -- really anything you want to study that varies at the node level
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Emergent Multi-Organizational Networks (EMON) Dataset}
+\begin{itemize}
+\item 7 case studies of EMONs in the context of search and rescue activities from Drabek et. al. (1981)
+\pause
+\item Ties between organizations are self-reported levels of communication coded from 1 to 4 with 1 as most frequent
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Emergent Multi-Organizational Networks (EMON) Dataset}
+Attribute Data
+\begin{itemize}
+\item Command Rank Score (CRS): mean rank (reversed) for prominence in the command structure
+\item Decision Rank Score (DRS): mean rank (reversed) for prominence in decision making process
+\item Paid Staff: number of paid employees
+\item Volunteer Staff: number of volunteer staff
+\item Sponsorship: organization type (City, County, State, Federal, or Private) 
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Correlation between DRS and Degree?}
+\begin{columns}
+\column{5cm}
+\begin{itemize}
+\uncover<2->{\item Subsample of Mutually Reported ``Continuous Communication" in Texas EMON}
+\uncover<3->{\item Degree is shown in color (darker is bigger)}
+\uncover<4->{\item DRS in size}
+\uncover<5->{\item Empirical corelation $\rho=0.86$}
+\end{itemize}
+\column{5cm}
+\includegraphics[width=5cm,trim=4.2cm 0cm 2.5cm 0cm, clip=true]{../images/texas1.jpeg}
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Correlation between DRS and Degree?}
+\begin{columns}
+\column{5cm}
+\includegraphics[width=5cm,trim=4.2cm 2cm 2.5cm 3cm, clip=true]{../images/texas1.jpeg}
+\begin{center}
+$\rho=0.86$
+\end{center}
+\column{5cm}
+\uncover<2->{
+\includegraphics[width=5cm,trim=4.2cm 2cm 2.5cm 3cm, clip=true]{../images/texasSim2.jpeg}
+\begin{center}
+\uncover<3->{$\rho=-0.07$}
+\end{center}
+}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Correlation between DRS and Degree?}
+\begin{columns}
+\column{5cm}
+\includegraphics[width=5cm,trim=4.2cm 2cm 2.5cm 3cm, clip=true]{../images/texas1.jpeg}
+\begin{center}
+$\rho=0.86$
+\end{center}
+\column{5cm}
+\includegraphics[width=2cm,trim=4.2cm 2cm 2.5cm 3cm, clip=true]{../images/texasSim1.jpeg}
+$\rho=-0.07$
+\uncover<2->{
+\includegraphics[width=2cm,trim=4.2cm 2cm 2.5cm 3cm, clip=true]{../images/texasSim2.jpeg}
+$\rho=-0.12$
+}
+\uncover<3->{
+\includegraphics[width=2cm,trim=4.2cm 2cm 2.5cm 3cm, clip=true]{../images/texasSim3.jpeg}
+$\rho=-0.39$
+}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Correlation between DRS and Degree?}
+\begin{tikzpicture}
+\node at (0,0) {\includegraphics[width=7cm,trim=0cm 0cm 0cm 0cm, clip=true]{../images/texasSimHist.jpg}};
+\uncover<2->{
+\draw [->,ultra thick] (3.5,1.8)--(2.8,1);
+\node at (4,2){$\rho_{obs}=0.86$};
+}
+\uncover<3->{
+\draw [->,ultra thick] (4.2,-1.3)--(2.8,-2.3);
+\node at (5,-1){$Pr(\rho\geq\rho_{obs})$};
+\node at (5, -1.5){$=3e-5$};
+}
+\uncover<4->{
+\draw [->,ultra thick] (-2.5,2.5)--(-.8,.8);
+\node at (-2.5,2.8){$Pr(\rho<\rho_{obs})=0.9999$};
+}
+\end{tikzpicture}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Regression?}
+\begin{itemize}
+\pause
+\item Can use Node Level Indices as independent variables in a regression
+\pause
+\item Big assumption: \textit{\textbf{position}} predicts the \textit{\textbf{properties of those who hold them}}
+\pause
+\item Conditioning on NLI values, so dependence in accounted for \textit{\textbf{assuming no error in the network}}
+\pause
+\item NLIs as dependent variables more problematic due to autocorrelation
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Code Time}
+Sections 1-2.3
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%
+\section{Quadratic Assignment Procedure}
+\begin{frame}
+\frametitle{Quadratic Assignment Procedure}
+
+\begin{columns}
+\column{5.5cm} %first column
+\includegraphics[width=5.5cm,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true ]{../images/floMarriage.jpg}
+\begin{center}
+Marriage
+\end{center}
+\column{6cm} %second column
+\includegraphics[width=5.5cm,,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true]{../images/floBusiness.jpg}
+\begin{center}
+Business
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Quadratic Assignment Proceedure}
+
+\begin{columns}
+\column{5.5cm} %first column
+\includegraphics[width=5.5cm,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true ]{../images/floMarriage.jpg}
+\begin{center}
+Marriage
+\end{center}
+\column{6cm} %second column
+\includegraphics[width=5.5cm,,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true]{../images/floBusiness2.jpg}
+\begin{center}
+Business
+\end{center}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Graph Correlation}
+\begin{itemize}
+\pause
+\item Simple way of comparing graphs on the same vertex set by element
+\pause
+\item $gcor \bigg(\begin{bmatrix}
+1&1\\
+1&0\\
+\end{bmatrix},
+\begin{bmatrix}
+1&1\\
+2&2\\
+\end{bmatrix}
+\bigg)=cor([1,1,1,0],[1,1,2,2])$
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Do business ties coincide with marriages?}
+
+\begin{columns}
+\column{5.5cm} %first column
+\includegraphics[width=5.5cm,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true ]{../images/floMarriage.jpg}
+\begin{center}
+Marriage
+\end{center}
+\column{6cm} %second column
+\includegraphics[width=5.5cm,,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true]{../images/floBusiness2.jpg}
+\begin{center}
+Business
+\end{center}
+\end{columns}
+\begin{center}
+$\rho = 0.372$
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Do business ties coincide with marriages?}
+
+\begin{columns}
+\column{5.5cm} %first column
+\includegraphics[width=5.5cm,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true ]{../images/floMarriage.jpg}
+\begin{center}
+Marriage
+\end{center}
+\column{6cm} %second column
+\includegraphics[width=5.5cm,,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true]{../images/floSim1.jpg}
+\begin{center}
+Business
+\end{center}
+\end{columns}
+\pause
+\begin{center}
+$\rho = 0.169$
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Do business ties coincide with marriages?}
+
+\begin{columns}
+\column{5.5cm} %first column
+\includegraphics[width=5.5cm,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true ]{../images/floMarriage.jpg}
+\begin{center}
+Marriage
+\end{center}
+\column{6cm} %second column
+\includegraphics[width=5.5cm,,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true]{../images/floSim2.jpg}
+\begin{center}
+Business
+\end{center}
+\end{columns}
+\begin{center}
+$\rho = -0.034$
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Do business ties coincide with marriages?}
+
+\begin{columns}
+\column{5.5cm} %first column
+\includegraphics[width=5.5cm,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true ]{../images/floMarriage.jpg}
+\begin{center}
+Marriage
+\end{center}
+\column{6cm} %second column
+\includegraphics[width=5.5cm,,trim=2cm 0.5cm 1.2cm 0.5cm, clip=true]{../images/floSim3.jpg}
+\begin{center}
+Business
+\end{center}
+\end{columns}
+\begin{center}
+$\rho = -0.101$
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{QAP Test}
+\begin{tikzpicture}
+\node at (0,0) {\includegraphics[width=7cm,trim=0cm 0cm 0cm 0cm, clip=true]{../images/floQap.jpg}};
+\uncover<2->{
+\draw [->,ultra thick] (3.5,1.8)--(2.8,1);
+\node at (4,2){$\rho_{obs}=0.372$};
+}
+\uncover<3->{
+\draw [->,ultra thick] (4.2,-.7)--(2.8,-1.8);
+\node at (5,-.5){$Pr(\rho\geq\rho_{obs})$};
+\node at (5, -1){$=.001$};
+}
+\uncover<4->{
+\draw [->,ultra thick] (-2.5,2.5)--(-1.2,1.2);
+\node at (-2.5,2.8){$Pr(\rho<\rho_{obs})=0.999$};
+}
+\end{tikzpicture}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\begin{center}
+\LARGE Why can't we use the same permutation test?
+\end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{QAP Test}
+\includegraphics<1>[width=10cm]{../images/explainQAP1.png}
+\includegraphics<2>[width=10cm]{../images/explainQAP2.png}
+\includegraphics<3>[width=10cm]{../images/explainQAP3.png}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Network Regression}
+\begin{itemize}
+\pause
+\item Family of models predicting social ties
+\pause
+\begin{itemize}
+\item Special case of standard OLS regression
+\pause
+\item Dependent variable is a network adjacency matrix
+\end{itemize}
+\pause
+\item $\textbf{E}Y_{ij}=\beta_0+\beta_1X_{1ij}+\beta_2X_{2ij}+\dots+\beta_{\rho}X_{\rho ij}$
+\pause
+\begin{itemize}
+\item Where $\textbf{E}$ is the expectation operator (analagous to ``mean" or ``average")
+\pause
+\item $Y_{ij}$ is the value from $i$ to $j$ on the dependent relation with adjacency matrix $Y$
+\pause
+\item $X_{kij}$ is the value of the \textit{k}th predictor for the $(i,j)$ ordered pair, and $\beta_0, \dots \beta_{\rho}$ are coefficients
+\end{itemize}
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Data Prep}
+\begin{itemize}
+\pause
+\item Dependent variable is an adjacency matrix
+\begin{itemize}
+\pause
+\item Standard case: dichotomous data
+\pause
+\item Valued case
+\end{itemize}
+\pause
+\item Independent variables also in adjacency matrix form
+\begin{itemize}
+\pause
+\item Always takes matrix form, but may be based on vector data
+\pause
+\item eg. simple adjacency matrix, sender/receiver effects, attribute differences, elements held in common
+\end{itemize}
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Code Time}
+Sections 2.4-2.5
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Network Autocorrelation}
+\begin{frame}
+\frametitle{Network Autocorrelation Models}
+\begin{itemize}
+\pause
+\item Family of models for estimating how covariates relate to each other through ties
+\begin{itemize}
+\pause
+\item Special case of standard OLS regression
+\pause
+\item Dependent variable is a vertex attribute
+\pause
+\end{itemize}
+\item $y=(I-\Theta W)^{-1} (X\beta + (I-\psi Z)^{-1}v)$
+\pause
+\begin{itemize}
+\item where $\Theta$ is the matrix for the Auto-Regressive weights
+\pause
+\item and $\psi$ is the matrix for the Moving Average weights
+\end{itemize}
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{The Classical Regression Model}
+\begin{tikzpicture}
+\draw[white] (0,0) grid (10,6);
+\draw [black] (3.5,2) rectangle (6.5,6);
+\node (net) at (5,4.5) {\includegraphics[width=5cm]{../images/p1.png}};
+\uncover<2->{\node [blue] at (5,2.5) {\LARGE{$X_i\beta$}};}
+\uncover<4->{\draw [->,ultra thick, blue,dotted] (5,2.1)--(5,0.5);}
+\uncover<3->{\node [blue] at (2,6) {\LARGE{$\epsilon_i$}};
+\draw [->,ultra thick, blue,dotted] (2.25,6)--(4,5);}
+\uncover<4->{\node [blue] at (5,0) {\LARGE{$y_i$}};}
+\end{tikzpicture}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Adding Network AR Effects}
+\begin{tikzpicture}
+\draw[white] (0,0) grid (10,6);
+\draw [black] (4,3) rectangle (6,6);
+\node (net) at (5,5) {\includegraphics[width=3.5cm]{../images/p1.png}};
+\node [blue] at (5,3.5) {\LARGE{$X_i\beta$}};
+\draw [->,ultra thick, blue, dotted] (5,3.1)--(5,2.3);
+\node [blue] at (3.4,6) {\LARGE{$\epsilon_i$}};
+\draw [->,ultra thick, blue, dotted] (3.7,6)--(4.2,5.5);
+\node [blue] at (5,2) {\LARGE{$y_i$}};
+
+\draw [black] (1,2) rectangle (3,5);
+\node (net) at (2,4) {\includegraphics[width=3.5cm]{../images/p4.png}};
+\node [blue] at (2,2.5) {\LARGE{$X_j\beta$}};
+\draw [->,ultra thick, blue, dotted] (2,2.1)--(2,1.4);
+\node [blue] at (0.4,5) {\LARGE{$\epsilon_j$}};
+\draw [->,ultra thick, blue, dotted] (.7,5)--(1.2,4.5);
+\node [blue] at (2,1) {\LARGE{$y_j$}};
+\uncover<2->{\draw [->, ultra thick, black] (3,3.5)--(4,4.5);}
+\uncover<3->{\draw [->, ultra thick, red] (2.3, 1.2)--(4.45, 3.3);}
+
+\draw [black] (7,2) rectangle (9,5);
+\node (net) at (8,4) {\includegraphics[width=3.5cm]{../images/p3.png}};
+\node [blue] at (8,2.5) {\LARGE{$X_k\beta$}};
+\draw [->,ultra thick, blue, dotted] (8,2.1)--(8,1.4);
+\node [blue] at (6.4,5) {\LARGE{$\epsilon_k$}};
+\draw [->,ultra thick, blue, dotted] (6.7,5)--(7.2,4.5);
+\node [blue] at (8,1) {\LARGE{$y_k$}};
+\uncover<2->{\draw [->, ultra thick, black] (7,3.5)--(6,4.5);}
+\uncover<3->{\draw [->, ultra thick, red] (7.7, 1.2)--(5.45, 3.3);}
+\end{tikzpicture}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Adding Network MA Effects}
+\begin{tikzpicture}
+\draw[white] (0,0) grid (10,6);
+\draw [black] (4,3) rectangle (6,6);
+\node (net) at (5,5) {\includegraphics[width=3.5cm]{../images/p1.png}};
+\node [blue] at (5,3.5) {\LARGE{$X_i\beta$}};
+\draw [->,ultra thick, blue,dotted] (5,3.1)--(5,2.3);
+\node [blue] at (3.4,6) {\LARGE{$\epsilon_i$}};
+\draw [->,ultra thick, blue,dotted] (3.7,6)--(4.2,5.5);
+\node [blue] at (5,2) {\LARGE{$y_i$}};
+
+\draw [black] (1,2) rectangle (3,5);
+\node (net) at (2,4) {\includegraphics[width=3.5cm]{../images/p4.png}};
+\node [blue] at (2,2.5) {\LARGE{$X_j\beta$}};
+\draw [->,ultra thick, blue,dotted] (2,2.1)--(2,1.4);
+\node [blue] at (0.4,5) {\LARGE{$\epsilon_j$}};
+\draw [->,ultra thick, blue,dotted] (.7,5)--(1.2,4.5);
+\node [blue] at (2,1) {\LARGE{$y_j$}};
+\draw [->, ultra thick, black] (3,3.5)--(4,4.5);
+\uncover<2->{\draw [->, ultra thick, red] (0.5, 5.2)--(4.2, 4.7);}
+
+\draw [black] (7,2) rectangle (9,5);
+\node (net) at (8,4) {\includegraphics[width=3.5cm]{../images/p3.png}};
+\node [blue] at (8,2.5) {\LARGE{$X_k\beta$}};
+\draw [->,ultra thick, blue,dotted] (8,2.1)--(8,1.4);
+\node [blue] at (6.4,5) {\LARGE{$\epsilon_k$}};
+\draw [->,ultra thick, blue,dotted] (6.7,5)--(7.2,4.5);
+\node [blue] at (8,1) {\LARGE{$y_k$}};
+\draw [->, ultra thick, black] (7,3.5)--(6,4.5);
+\uncover<2->{\draw [->, ultra thick, red] (6.1, 5)--(5.8, 4.7);}
+
+\end{tikzpicture}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Network ARMA Model}
+\begin{tikzpicture}
+\draw[white] (0,0) grid (10,6);
+\draw [black] (4,3) rectangle (6,6);
+\node (net) at (5,5) {\includegraphics[width=3.5cm]{../images/p1.png}};
+\node [blue] at (5,3.5) {\LARGE{$X_i\beta$}};
+\draw [->,ultra thick, blue,dotted] (5,3.1)--(5,2.3);
+\node [blue] at (3.4,6) {\LARGE{$\epsilon_i$}};
+\draw [->,ultra thick, blue,dotted] (3.7,6)--(4.2,5.5);
+\node [blue] at (5,2) {\LARGE{$y_i$}};
+
+\draw [black] (1,2) rectangle (3,5);
+\node (net) at (2,4) {\includegraphics[width=3.5cm]{../images/p4.png}};
+\node [blue] at (2,2.5) {\LARGE{$X_j\beta$}};
+\draw [->,ultra thick, blue,dotted] (2,2.1)--(2,1.4);
+\node [blue] at (0.4,5) {\LARGE{$\epsilon_j$}};
+\draw [->,ultra thick, blue,dotted] (.7,5)--(1.2,4.5);
+\node [blue] at (2,1) {\LARGE{$y_j$}};
+\draw [->, ultra thick, black] (3,3.5)--(4,4.5);
+\draw [->, ultra thick, red] (0.5, 5.2)--(4.2, 4.7);
+\draw [->, ultra thick, red] (2.3, 1.2)--(4.45, 3.3);
+
+\draw [black] (7,2) rectangle (9,5);
+\node (net) at (8,4) {\includegraphics[width=3.5cm]{../images/p3.png}};
+\node [blue] at (8,2.5) {\LARGE{$X_k\beta$}};
+\draw [->,ultra thick, blue,dotted] (8,2.1)--(8,1.4);
+\node [blue] at (6.4,5) {\LARGE{$\epsilon_k$}};
+\draw [->,ultra thick, blue,dotted] (6.7,5)--(7.2,4.5);
+\node [blue] at (8,1) {\LARGE{$y_k$}};
+\draw [->, ultra thick, black] (7,3.5)--(6,4.5);
+\draw [->, ultra thick, red] (6.1, 5)--(5.8, 4.7);
+\draw [->, ultra thick, red] (7.7, 1.2)--(5.45, 3.3);
+
+\end{tikzpicture}
+\end{frame}
+%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Network `Resonance'}
+\begin{tikzpicture}
+\draw[white] (0,0) grid (12,6);
+
+\node (net) at (4,5) {\includegraphics[width=3.5cm]{../images/p1.png}};
+\node (net) at (4,1) {\includegraphics[width=3.5cm]{../images/p4.png}};
+\node (net) at (0,3) {\includegraphics[width=3.5cm]{../images/p3.png}};
+\node (net) at (8,3) {\includegraphics[width=3.5cm]{../images/p2.png}};
+
+\draw [<->, ultra thick, black] (1,3.2)--(3.3,5);
+\draw [<->, ultra thick, black] (1,2.8)--(3.3,1);
+\draw [<->, ultra thick, black] (4.7,5)--(7,3.2);
+\draw [<->, ultra thick, black] (4.7,1)--(7,2.8);
+
+\uncover<2->{
+\node [blue] at (2.5,6) {\LARGE{$\epsilon_i$}};
+\draw [->,ultra thick, blue,dotted] (2.8,6)--(3.3,5.5);
+\node [blue] at (2.8,2) {\LARGE{$\epsilon_j$}};
+\draw [->,ultra thick, blue,dotted] (3,2)--(3.5,1.7);
+\node [blue] at (-1.2,4) {\LARGE{$\epsilon_k$}};
+\draw [->,ultra thick, blue,dotted] (-.8,4)--(-.5,3.8);
+\node [blue] at (6.8,4) {\LARGE{$\epsilon_l$}};
+\draw [->,ultra thick, blue,dotted] (7.1,4)--(7.5,3.8);
+}
+
+\uncover<3->{
+\draw [red, ultra thick] (-1.2,4) circle [radius=0.5];
+}
+
+\uncover<4->{
+\draw [->, ultra thick, red, dashed] (1,3.5)--(3.3,5.3);
+\draw [->, ultra thick, red, dashed] (1,2.5)--(3.3,.7);
+}
+
+\uncover<5->{
+\draw [<-, thick, red, dashed] (1,3.8)--(3.3,5.6);
+\draw [<-, thick, red, dashed] (1,2.2)--(3.3,.4);
+
+\draw [->, thick, red, dashed] (4.8,5.3)--(6.9,3.6);
+\draw [->, thick, red, dashed] (4.8,.7)--(6.9,2.4);
+}
+
+\uncover<6->{
+\draw [->, red, dashed] (1,4.1)--(3.3,6);
+\draw [->, red, dashed] (1,1.9)--(3.3,.1);
+
+\draw [<-, red, dashed] (4.8,5.6)--(6.9,3.9);
+\draw [<-, red, dashed] (4.8,.4)--(6.9,2.1);
+}
+
+
+\end{tikzpicture}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Inference with the Network Autocorrelation Model}
+\begin{itemize}
+\pause
+\item Usually observe $\textbf{y}$, $\textbf{X}$, and $\textbf{Z}$ and/or $\textbf{Z}$, want to infer $\beta$, $\theta$, and $\phi$
+\pause
+\item Need each $\textbf{I}-\textbf{W}, \textbf{I}-\textbf{Z}$ invertible for solution to exist
+\pause
+\item error in disturbance autocorrelation, $v$, assumed as iid, $v_i~N(0,\sigma^2)$
+\pause
+\item Standard errors based on the inverse information matrix at the MLE
+\pause
+\item Compare models in the usual way (eg AIC, BIC)
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Choosing the Weight Matrix}
+\begin{itemize}
+\pause
+\item crucial modeling issue to choose the right form
+\begin{itemize}
+\pause
+\item standard adjacency matrix
+\pause
+\item row-normalized adjancecy matrix
+\pause
+\item structural equivalence distance
+\end{itemize}
+\pause
+\item Many suggestions given by Leenders 2002
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Data Prep}
+\begin{itemize}
+\pause
+\item Dependent variable is a vertex attribute
+\pause
+\item Covariates are in matrix form with one column per attribute
+\pause
+\item Can include an intercept term by adding a column of 1s
+\pause
+\item Weight matrices for both AR and MA terms in matrix form
+\pause
+\item Can include multiple weight matrices (as a list) for both AR and MA
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Leenders 2002}
+\includegraphics[width=7cm,keepaspectratio]{../images/louisiana.jpg}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Leenders 2002}
+\includegraphics[width=10cm,keepaspectratio]{../images/laNet.png}
+\end{frame}
+%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Variables}
+\begin{itemize}
+\item Dependent variable: proportion of support in a parish for democratic presidential candidate Kennedy in the 1960 elections
+\pause
+\item Covariates: 
+\begin{itemize}
+\pause
+\item $B$ is the percentage of African American residents in the parish
+\pause
+\item $C$ is the percentage of Catholic residents in the parish
+\pause
+\item $U$ is the percentage of the parish considered urban
+\pause
+\item $BPE$ is a measure of 'black political equality'
+\end{itemize}
+\pause
+\item Weight matrix ($\rho$): simple contiguity network
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Leenders 2002}
+\includegraphics[width=10cm,keepaspectratio]{../images/leenders_tab3.jpg}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Leenders 2002}
+\includegraphics[width=10cm,keepaspectratio]{../images/leeders_tab5.png}
+\end{frame}
+%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Code Time}
+Section 2.6
+\end{frame}
+
+%%%%%%%%%%%%%
+\section{Baseline Models}
+\begin{frame}
+\frametitle{Baseline Models}
+\begin{itemize}
+\pause
+\item treats social structure as maximally random given some fixed constraints
+\pause
+\item methodological premise from Mayhew
+\begin{itemize}
+\pause
+\item identify potentially constraining factors
+\pause
+\item compare observed properties to baseline model
+\pause
+\item useful even when baseline model is not `realistic'
+\end{itemize}
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Types of Baseline Hypotheses}
+\begin{tikzpicture}
+\uncover<2->{
+\draw [ultra thick, fill=red] (0,0) circle [radius=.2];
+\draw [ultra thick, fill=yellow] (1,1) circle [radius=.2];
+\draw [ultra thick, fill=green] (2,0) circle [radius=.2];
+\draw [ultra thick, fill=blue] (1,-1) circle [radius=.2];
+\draw [<->, ultra thick] (.15,.15)--(.85,.85);
+\draw [->, ultra thick] (.2,0)--(1.8,0);
+\draw [->, ultra thick] (.15,-.15)--(.85,-.85);
+\node at (1,-2) {Empirical Network};
+}
+\uncover<3->{
+\draw [thick, fill=red] (4,3) circle [radius=.1];
+\draw [thick, fill=yellow] (4.5,3.5) circle [radius=.1];
+\draw [thick, fill=blue] (5,3) circle [radius=.1];
+\draw [thick, fill=green] (4.5,2.5) circle [radius=.1];
+\draw [<->, thick] (4.05,3.05)--(4.45,3.45);
+\draw [->, thick] (4.1,3)--(4.9,3);
+\draw [->, thick] (4.05,2.95)--(4.45,2.55);
+}
+
+\uncover<4->{
+\draw [thick, fill=red] (4,1) circle [radius=.1];
+\draw [thick, fill=green] (4.5,1.5) circle [radius=.1];
+\draw [thick, fill=blue] (5,1) circle [radius=.1];
+\draw [thick, fill=yellow] (4.5,.5) circle [radius=.1];
+\draw [<->, thick] (4.05,1.05)--(4.45,1.45);
+\draw [->, thick] (4.1,1)--(4.9,1);
+\draw [->, thick] (4.05,.95)--(4.45,.55);
+}
+
+\uncover<5->{
+\draw [thick, fill=red] (4,-1) circle [radius=.1];
+\draw [thick, fill=green] (4.5,-.5) circle [radius=.1];
+\draw [thick, fill=yellow] (5,-1) circle [radius=.1];
+\draw [thick, fill=blue] (4.5,-1.5) circle [radius=.1];
+\draw [<->, thick] (4.05,-.95)--(4.45,-.55);
+\draw [->, thick] (4.1,-1)--(4.9,-1);
+\draw [->, thick] (4.05,-1.05)--(4.45,-1.45);
+
+\draw [thick, fill=red] (4,-3) circle [radius=.1];
+\draw [thick, fill=blue] (4.5,-2.5) circle [radius=.1];
+\draw [thick, fill=green] (5,-3) circle [radius=.1];
+\draw [thick, fill=yellow] (4.5,-3.5) circle [radius=.1];
+\draw [<->, thick] (4.05,-2.95)--(4.45,-2.55);
+\draw [->, thick] (4.1,-3)--(4.9,-3);
+\draw [->, thick] (4.05,-3.05)--(4.45,-3.45);
+
+
+\draw [thick, fill=red] (6,3) circle [radius=.1];
+\draw [thick, fill=blue] (6.5,3.5) circle [radius=.1];
+\draw [thick, fill=yellow] (7,3) circle [radius=.1];
+\draw [thick, fill=green] (6.5,2.5) circle [radius=.1];
+\draw [<->, thick] (6.05,3.05)--(6.45,3.45);
+\draw [->, thick] (6.1,3)--(6.9,3);
+\draw [->, thick] (6.05,2.95)--(6.45,2.55);
+
+\draw [thick, fill=yellow] (6,1) circle [radius=.1];
+\draw [thick, fill=red] (6.5,1.5) circle [radius=.1];
+\draw [thick, fill=blue] (7,1) circle [radius=.1];
+\draw [thick, fill=green] (6.5,.5) circle [radius=.1];
+\draw [<->, thick] (6.05,1.05)--(6.45,1.45);
+\draw [->, thick] (6.1,1)--(6.9,1);
+\draw [->, thick] (6.05,.95)--(6.45,.55);
+
+\draw [thick, fill=yellow] (6,-1) circle [radius=.1];
+\draw [thick, fill=red] (6.5,-.5) circle [radius=.1];
+\draw [thick, fill=green] (7,-1) circle [radius=.1];
+\draw [thick, fill=blue] (6.5,-1.5) circle [radius=.1];
+\draw [<->, thick] (6.05,-.95)--(6.45,-.55);
+\draw [->, thick] (6.1,-1)--(6.9,-1);
+\draw [->, thick] (6.05,-1.05)--(6.45,-1.45);
+
+\draw [thick, fill=yellow] (6,-3) circle [radius=.1];
+\draw [thick, fill=green] (6.5,-2.5) circle [radius=.1];
+\draw [thick, fill=red] (7,-3) circle [radius=.1];
+\draw [thick, fill=blue] (6.5,-3.5) circle [radius=.1];
+\draw [<->, thick] (6.05,-2.95)--(6.45,-2.55);
+\draw [->, thick] (6.1,-3)--(6.9,-3);
+\draw [->, thick] (6.05,-3.05)--(6.45,-3.45);
+\node at (8,-2) {$\dots$ etc};
+}
+
+\end{tikzpicture}
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Types of Baseline Hypotheses}
+\begin{tikzpicture}
+\draw [ultra thick, fill=red] (0,0) circle [radius=.2];
+\draw [ultra thick, fill=yellow] (1,1) circle [radius=.2];
+\draw [ultra thick, fill=green] (2,0) circle [radius=.2];
+\draw [ultra thick, fill=blue] (1,-1) circle [radius=.2];
+\draw [<->, ultra thick] (.15,.15)--(.85,.85);
+\draw [->, ultra thick] (.2,0)--(1.8,0);
+\draw [->, ultra thick] (.15,-.15)--(.85,-.85);
+\node at (1,-2) {Empirical Network};
+
+\uncover<2->{
+\draw [thick, fill=black] (4,3) circle [radius=.1];
+\draw [thick, fill=black] (4.5,3.5) circle [radius=.1];
+\draw [thick, fill=black] (5,3) circle [radius=.1];
+\draw [thick, fill=black] (4.5,2.5) circle [radius=.1];
+%\draw [<->, thick] (4.05,3.05)--(4.45,3.45);
+%\draw [->, thick] (4.1,3)--(4.9,3);
+%\draw [->, thick] (4.05,2.95)--(4.45,2.55);
+}
+
+\uncover<3->{
+\draw [thick, fill=black] (4,1) circle [radius=.1];
+\draw [thick, fill=black] (4.5,1.5) circle [radius=.1];
+\draw [thick, fill=black] (5,1) circle [radius=.1];
+\draw [thick, fill=black] (4.5,.5) circle [radius=.1];
+%\draw [<->, thick] (4.05,1.05)--(4.45,1.45);
+%\draw [->, thick] (4.1,1)--(4.9,1);
+\draw [->, thick] (4.05,.95)--(4.45,.55);
+}
+
+\uncover<4->{
+\draw [thick, fill=black] (4,-1) circle [radius=.1];
+\draw [thick, fill=black] (4.5,-.5) circle [radius=.1];
+\draw [thick, fill=black] (5,-1) circle [radius=.1];
+\draw [thick, fill=black] (4.5,-1.5) circle [radius=.1];
+%\draw [<->, thick] (4.05,-.95)--(4.45,-.55);
+\draw [->, thick] (4.1,-1)--(4.9,-1);
+\draw [->, thick] (4.05,-1.05)--(4.45,-1.45);
+
+\draw [thick, fill=black] (4,-3) circle [radius=.1];
+\draw [thick, fill=black] (4.5,-2.5) circle [radius=.1];
+\draw [thick, fill=black] (5,-3) circle [radius=.1];
+\draw [thick, fill=black] (4.5,-3.5) circle [radius=.1];
+%\draw [<->, thick] (4.05,-2.95)--(4.45,-2.55);
+\draw [->, thick] (4.55,-2.55)--(4.95,-2.95);
+\draw [->, thick] (4.05,-3.05)--(4.45,-3.45);
+
+
+\draw [thick, fill=black] (6,3) circle [radius=.1];
+\draw [thick, fill=black] (6.5,3.5) circle [radius=.1];
+\draw [thick, fill=black] (7,3) circle [radius=.1];
+\draw [thick, fill=black] (6.5,2.5) circle [radius=.1];
+\draw [<->, thick] (6.05,3.05)--(6.45,3.45);
+\draw [->, thick] (6.1,3)--(6.9,3);
+%\draw [->, thick] (6.05,2.95)--(6.45,2.55);
+
+\draw [thick, fill=black] (6,1) circle [radius=.1];
+\draw [thick, fill=black] (6.5,1.5) circle [radius=.1];
+\draw [thick, fill=black] (7,1) circle [radius=.1];
+\draw [thick, fill=black] (6.5,.5) circle [radius=.1];
+\draw [->, thick] (6.05,1.05)--(6.45,1.45);
+\draw [->, thick] (6.1,1)--(6.9,1);
+\draw [->, thick] (6.55,1.45)--(6.95,1.05);
+
+\draw [thick, fill=black] (6,-1) circle [radius=.1];
+\draw [thick, fill=black] (6.5,-.5) circle [radius=.1];
+\draw [thick, fill=black] (7,-1) circle [radius=.1];
+\draw [thick, fill=black] (6.5,-1.5) circle [radius=.1];
+\draw [<->, thick] (6.05,-.95)--(6.45,-.55);
+\draw [->, thick] (6.1,-1)--(6.9,-1);
+\draw [->, thick] (6.5,-.6)--(6.5,-1.4);
+
+\draw [thick, fill=black] (6,-3) circle [radius=.1];
+\draw [thick, fill=black] (6.5,-2.5) circle [radius=.1];
+\draw [thick, fill=black] (7,-3) circle [radius=.1];
+\draw [thick, fill=black] (6.5,-3.5) circle [radius=.1];
+\draw [<->, thick] (6.1,-3)--(6.9,-3);
+\draw [->, thick] (6.55,-2.55)--(6.95,-2.95);
+\draw [->, thick] (6.05,-3.05)--(6.45,-3.45);
+\node at (8,-2) {$\dots$ etc};
+}
+
+\end{tikzpicture}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Types of Baseline Models}
+\begin{itemize}
+\pause
+\item \textbf{Size:} given the number of individuals, all structures are equally likely
+\pause
+\item \textbf{Number of edges/probability of an edge:} given the number of individuals and interactions (aka Erd\"os-Renyi random graphs)
+\pause
+\item \textbf{Dyad census:} given number of individuals, mutuals, asymmetric, and null relationships
+\pause
+\item \textbf{Degree distribution:} given the number of individuals and each individual's outgoing/incoming ties
+\pause
+\item \textbf{Number of triangles:} not implemented due to complexity -- with ERGM, can condition on the \textit{expected} number of triangles
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Method}
+\begin{itemize}
+\pause
+\item Select a test statistic (graph correlation, reciprocity, transitivity\dots)
+\pause
+\item Select a baseline hypothesis (what you're conditioning on)
+\pause
+\item Simulate from the baseline hypothesis
+\pause
+\item For each simulation, recalculate the test statistic
+\pause
+\item Compare empirical value to null distribution, just as in standard statistical testing
+\end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Example}
+Transitivity in the Hurricane Frederic EMON
+\begin{columns}
+\column{3cm}
+\begin{itemize}
+\uncover<3->{
+\item $\rho = 0.475$
+\item indicates that roughly half the time that $i\rightarrow j\rightarrow k$, $i\rightarrow k$
+}
+\end{itemize}
+\column{8cm}
+\uncover<2->{\includegraphics[width=8cm,trim=3cm 3cm 3cm 3cm, clip=true]{../images/hurricaneFrederic.png}}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Example}
+\includegraphics[width=8cm]{../images/cugSize.png}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Example}
+\includegraphics[width=8cm]{../images/cugEdges.png}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Bodin and Tengo}
+\uncover<1>{``Disentangling intangible social–ecological systems''}
+\includegraphics<2>[width=9cm]{../images/bodinTengo1.png}
+\includegraphics<3>[width=9cm]{../images/bodinTengo2.png}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Summary}
+\begin{itemize}
+\pause
+\item Network indices as independent variables in regression
+\pause
+\item QAP regression (edges are the dependent variable)
+\pause
+\item Network Autocorrelation Model (vertex attribute is dependent variable)
+\pause
+\item CUG tests (network is dependent variable)
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Code Time}
+\begin{itemize}
+\item the rest!  whew!
+\end{itemize}
+\end{frame}
+
+\end{document}
